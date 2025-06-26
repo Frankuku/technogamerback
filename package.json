@@ -1,0 +1,31 @@
+{
+  "name": "web8",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "start:no-comments": "node src-without-comments/app.js",
+    "dev:no-comments": "node --watch src-without-comments/app.js",
+    "start:class": "node src-class/app.js",
+    "dev:class": "node --watch src-class/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.13.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.0"
+  }
+}
