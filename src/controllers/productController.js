@@ -9,7 +9,9 @@ export const getProducts = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const products = await Product.find()
+        //const products = await Product.find()
+        const products = await Product.find().populate('category')
+
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
