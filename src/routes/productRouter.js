@@ -40,25 +40,25 @@ productRouter.put("/:id", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     check('name').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ], updateProduct);
 
 productRouter.patch("/:id", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ], patchProduct);
 
 productRouter.delete("/:id", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ], deleteProduct);
 
 productRouter.post("/:id/upload-image", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ],
     upload.single('image'),
     uploadProductImage
