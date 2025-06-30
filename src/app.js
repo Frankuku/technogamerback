@@ -1,6 +1,6 @@
+import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
