@@ -39,26 +39,46 @@ export const login = async (req, res) => {
 
 }
 
+
 export const getUsers = async (req, res) => {
-    try {
-        const users = await User.find().select(['email', 'name', 'role']);
+  try {
+    const { page = 1, limit = 5, search = "" } = req.query;
+    const currentPage = parseInt(page);
+    const perPage = parseInt(limit);
 
-        console.log(users)
-
-        res.json({
-            statusOK: true,
-            message: "users ok!",
-            users: users
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            statusOK: false,
-            message: "Error al obtener usuarios"
-        })
+    const filter = {};
+    if (search.trim()) {
+      filter.$or = [
+        { username: { $regex: search, $options: 'i' } },
+        { email:    { $regex: search, $options: 'i' } }
+      ];
     }
-}
+
+    const totalUsers = await User.countDocuments(filter);
+    const totalPages = Math.ceil(totalUsers / perPage);
+
+    const users = await User.find(filter)
+      .select(['username', 'email', 'role'])
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    res.json({
+      statusOK:    true,
+      message:     "Usuarios obtenidos con paginación",
+      users,
+      currentPage,
+      totalPages,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusOK: false,
+      message:  "Error al obtener usuarios",
+    });
+  }
+};
+
+
 
 export const createUser = async (req, res) => {
     try {
