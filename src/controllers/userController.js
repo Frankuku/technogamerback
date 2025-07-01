@@ -39,7 +39,9 @@ export const login = async (req, res) => {
 
 }
 
+
 export const getUsers = async (req, res) => {
+<<<<<<< HEAD
     try {
         const { page = 1, limit = 5, search = "" } = req.query;
 
@@ -73,6 +75,47 @@ export const getUsers = async (req, res) => {
         });
     }
 };
+=======
+  try {
+    const { page = 1, limit = 5, search = "" } = req.query;
+    const currentPage = parseInt(page);
+    const perPage = parseInt(limit);
+
+    const filter = {};
+    if (search.trim()) {
+      filter.$or = [
+        { username: { $regex: search, $options: 'i' } },
+        { email:    { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const totalUsers = await User.countDocuments(filter);
+    const totalPages = Math.ceil(totalUsers / perPage);
+
+    const users = await User.find(filter)
+      .select(['username', 'email', 'role'])
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    res.json({
+      statusOK:    true,
+      message:     "Usuarios obtenidos con paginación",
+      users,
+      currentPage,
+      totalPages,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusOK: false,
+      message:  "Error al obtener usuarios",
+    });
+  }
+};
+
+
+
+>>>>>>> ba8567ce84777cd8c07f9ae3e44b72aa1d7e47ae
 export const createUser = async (req, res) => {
     try {
         const { username, email, password, role = "user" } = req.body;

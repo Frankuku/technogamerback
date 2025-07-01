@@ -12,7 +12,6 @@ export const getProducts = async (req, res) => {
     const searchQuery = req.query.search || '';
     const categoryFilter = req.query.category || '';
 
-    // Construimos filtro dinámico
     const filter = {};
 
     if (searchQuery.trim()) {
