@@ -35,19 +35,19 @@ categoryRouter.put("/:id", [
     param('id').isMongoId().withMessage('ID de categoría no válido'),
     check('name').notEmpty().withMessage('El nombre de la categoría es obligatorio'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ], updateCategory);
 
 categoryRouter.patch("/:id", [
     param('id').isMongoId().withMessage('ID de categoría no válido'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ], patchCategory);
 
 categoryRouter.delete("/:id", [
     param('id').isMongoId().withMessage('ID de categoría no válido'),
     handleValidationErrors,
-    verifyToken
+    //verifyToken
 ], deleteCategory);
 
 export default categoryRouter;

@@ -41,25 +41,38 @@ export const login = async (req, res) => {
 
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find().select(['email', 'name', 'role']);
+        const { page = 1, limit = 5, search = "" } = req.query;
 
-        console.log(users)
+        const query = {
+            $or: [
+                { email: { $regex: search, $options: "i" } },
+                { username: { $regex: search, $options: "i" } },
+            ],
+        };
+
+        const total = await User.countDocuments(query);
+        const users = await User.find(query)
+            .select(["email", "username", "role"])
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
+
+        const totalPages = Math.ceil(total / limit);
 
         res.json({
             statusOK: true,
             message: "users ok!",
-            users: users
-        })
-
+            users,
+            currentPage: Number(page),
+            totalPages,
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({
             statusOK: false,
-            message: "Error al obtener usuarios"
-        })
+            message: "Error al obtener usuarios",
+        });
     }
-}
-
+};
 export const createUser = async (req, res) => {
     try {
         const { username, email, password, role = "user" } = req.body;
