@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema({
     },
     items: [
         {
-            product: {
+            productId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product',
                 required: true
@@ -35,8 +35,9 @@ const orderSchema = new mongoose.Schema({
         country: String
     },
     paymentInfo: {
-        method: String,
-        transactionId: String
+        type: String,
+        enum: ['cash', 'credit', 'card', 'completed'],
+        default: 'cash'
     },
     totalItems: {
         type: Number,
@@ -48,7 +49,7 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'cancelled'],
+        enum: ['pending', 'delivered', 'completed', 'cancelled'],
         default: 'pending'
     }
 }, {

@@ -55,7 +55,7 @@ productRouter.delete("/:id", [
     //verifyToken
 ], deleteProduct);
 
-productRouter.post("/:id/upload-image", [
+productRouter.post("/:id/upload", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
     //verifyToken
