@@ -76,38 +76,31 @@ export const getUsers = async (req, res) => {
 };
 export const createUser = async (req, res) => {
     try {
+        console.log(req.user)
         const { username, email, password, role = "user" } = req.body;
 
-        // Verificar si el email ya existe
-        const emailExists = await User.findOne({ email });
-        if (emailExists) {
+        // Verificar si el usuario ya existe
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(400).json({
                 success: false,
                 message: "El email ya está registrado"
             });
         }
 
-        // Verificar si el username ya existe
-        const usernameExists = await User.findOne({ username });
-        if (usernameExists) {
-            return res.status(400).json({
-                success: false,
-                message: "El nombre de usuario ya está en uso"
-            });
-        }
+        const salt = await bcryptjs.genSalt(10)
 
-        const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
 
-        const newUser = await User.create({ username, email, password: hashedPassword, role });
+        const newUser = await User.create({ username, email, password: hashedPassword, role })
 
         res.status(201).json({
             message: "USUARIO CREADO EXITOSAMENTE",
             user: newUser
-        });
+        })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Error al crear el usuario" });
+        console.log(error)
+        res.status(500).json({ success: false, message: "Error al crear el usuario" })
     }
 }
 
