@@ -3,6 +3,7 @@ import Product from "../models/Product.js";
 import User from "../models/User.js";
 
 export const createOrder = async (req, res) => {
+
     try {
         const { 
             items,
@@ -10,12 +11,7 @@ export const createOrder = async (req, res) => {
             paymentInfo
         } = req.body;
 
-        if (!req.user) {
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Debe iniciar sesión para realizar una compra'
-            });
-        }
+     console.log(items) 
 
         if (!items || items.length === 0) {
             return res.status(400).json({
@@ -27,7 +23,8 @@ export const createOrder = async (req, res) => {
         const orderItems = [];
         
         for (const item of items) {
-            const product = await Product.findById(item.product);
+            console.log(item)
+            const product = await Product.findById(item.productId);
             
             if (!product) {
                 return res.status(404).json({
@@ -42,9 +39,9 @@ export const createOrder = async (req, res) => {
                     message: `Stock insuficiente para ${product.name}. Disponible: ${product.stock}, Solicitado: ${item.quantity}`
                 });
             }
-            
+            console.log(product)
             orderItems.push({
-                product: product._id,
+                productId: product._id,
                 quantity: item.quantity,
                 price: product.price,
                 productName: product.name
@@ -55,7 +52,7 @@ export const createOrder = async (req, res) => {
         }
 
         const order = await Order.create({
-            user: req.user._id,
+            user: "685dd0c106b4a461afce3732",
             items: orderItems,
             shippingAddress,
             paymentInfo,
@@ -86,10 +83,6 @@ export const getOrders = async (req, res) => {
         const skip = (page - 1) * limit;
         
         let query = {};
-        
-        if (!req.user.isAdmin) {
-            query = { user: req.user._id };
-        }
         
         const orders = await Order.find(query)
             .populate('user', 'name email')
@@ -122,8 +115,8 @@ export const getOrderById = async (req, res) => {
         const orderId = req.params.id;
         
         const order = await Order.findById(orderId)
-            .populate('user', 'name email')
-            .populate('items.product');
+            .populate('user', 'username email')
+            .populate('items.productId');
         
         if (!order) {
             return res.status(404).json({
@@ -132,13 +125,7 @@ export const getOrderById = async (req, res) => {
             });
         }
         
-        if (order.user._id.toString() !== req.user._id.toString() && !req.user.isAdmin) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tiene permiso para ver esta orden'
-            });
-        }
-        
+       
         res.json({
             success: true,
             order
@@ -158,12 +145,6 @@ export const updateOrderStatus = async (req, res) => {
         const orderId = req.params.id;
         const { status, paymentStatus } = req.body;
         
-        if (!req.user.isAdmin) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tiene permiso para actualizar órdenes'
-            });
-        }
         
         const order = await Order.findById(orderId);
         
