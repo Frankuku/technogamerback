@@ -42,7 +42,7 @@ userRouter.post("/",
     ],
     handleValidationErrors,
     //verifyToken,
-    //verifyAdminRole,
+    // verifyAdminRole,
     createUser
 )
 
@@ -53,6 +53,8 @@ userRouter.delete("/:id",
     handleValidationErrors,
     //verifyToken,
     //verifyAdminRole,
+    //verifyToken,
+    //verifyAdminRole,
     deleteUser
 )
 
@@ -60,6 +62,7 @@ userRouter.put("/:id", [
     param('id', 'El id proporcionado no es de mongodb, fijate bien').isMongoId()
 ],
     handleValidationErrors,
+    //verifyToken,
     //verifyToken,
     updateUser
 )
