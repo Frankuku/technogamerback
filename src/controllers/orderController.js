@@ -33,6 +33,7 @@ export const createOrder = async (req, res) => {
                     message: `Stock insuficiente para ${product.name}. Disponible: ${product.stock}, Solicitado: ${item.quantity}`
                 });
             }
+
             orderItems.push({
                 productId: product._id,
                 quantity: item.quantity,
@@ -140,6 +141,7 @@ export const getOrderById = async (req, res) => {
                 message: 'Orden no encontrada'
             });
         }
+
         res.json({
             success: true,
             order
@@ -158,6 +160,8 @@ export const updateOrderStatus = async (req, res) => {
     try {
         const orderId = req.params.id;
         const { status, paymentStatus } = req.body;
+        console.log(status);
+
         const order = await Order.findById(orderId);
 
         if (!order) {
@@ -252,4 +256,3 @@ export const cancelOrder = async (req, res) => {
         });
     }
 };
-

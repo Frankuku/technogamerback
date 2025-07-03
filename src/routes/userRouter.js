@@ -42,7 +42,7 @@ userRouter.post("/",
     ],
     handleValidationErrors,
     //verifyToken,
-    // verifyAdminRole,
+    //verifyAdminRole,
     createUser
 )
 
