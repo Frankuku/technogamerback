@@ -3,6 +3,7 @@ import Product from "../models/Product.js";
 import User from "../models/User.js";
 
 export const createOrder = async (req, res) => {
+    console.log(req.user)
     try {
         const {
             items,
@@ -46,7 +47,7 @@ export const createOrder = async (req, res) => {
         }
 
         const order = await Order.create({
-            user: "685dd8489f2b33b59c5b546d",
+            user: req.user._id,
             items: orderItems,
             shippingAddress,
             paymentInfo,
