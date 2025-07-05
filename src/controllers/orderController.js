@@ -3,8 +3,9 @@ import Product from "../models/Product.js";
 import User from "../models/User.js";
 
 export const createOrder = async (req, res) => {
+    console.log(req.user)
     try {
-        const { 
+        const {
             items,
             shippingAddress,
             paymentInfo
@@ -46,7 +47,7 @@ export const createOrder = async (req, res) => {
         }
 
         const order = await Order.create({
-            user: "685dd8489f2b33b59c5b546d",
+            user: req.user._id,
             items: orderItems,
             shippingAddress,
             paymentInfo,
@@ -71,60 +72,60 @@ export const createOrder = async (req, res) => {
 };
 
 export const getOrders = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
-    const { status, orderId, userSearch } = req.query;
+        const { status, orderId, userSearch } = req.query;
 
-    let query = {};
+        let query = {};
 
-    if (status) {
-      query.status = status;
+        if (status) {
+            query.status = status;
+        }
+
+        let orders = await Order.find(query)
+            .populate('user', 'username email')
+            .sort({ createdAt: -1 });
+
+        // Filtro por ID parcial (orderId)
+        if (orderId) {
+            const lowerId = orderId.toLowerCase();
+            orders = orders.filter(o =>
+                o._id.toString().toLowerCase().includes(lowerId)
+            );
+        }
+
+        // Filtro por usuario (email o username)
+        if (userSearch) {
+            const lowerSearch = userSearch.toLowerCase();
+            orders = orders.filter(o =>
+                o.user?.username?.toLowerCase().includes(lowerSearch) ||
+                o.user?.email?.toLowerCase().includes(lowerSearch)
+            );
+        }
+
+        const total = orders.length;
+        const totalPages = Math.ceil(total / limit);
+        const paginatedOrders = orders.slice(skip, skip + limit);
+
+        res.json({
+            success: true,
+            orders: paginatedOrders,
+            total,
+            totalPages,
+            currentPage: page
+        });
+
+    } catch (error) {
+        console.error("ERROR EN getOrders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener las órdenes',
+            error: error.message
+        });
     }
-
-    let orders = await Order.find(query)
-      .populate('user', 'username email')
-      .sort({ createdAt: -1 });
-
-    // Filtro por ID parcial (orderId)
-    if (orderId) {
-      const lowerId = orderId.toLowerCase();
-      orders = orders.filter(o =>
-        o._id.toString().toLowerCase().includes(lowerId)
-      );
-    }
-
-    // Filtro por usuario (email o username)
-    if (userSearch) {
-      const lowerSearch = userSearch.toLowerCase();
-      orders = orders.filter(o =>
-        o.user?.username?.toLowerCase().includes(lowerSearch) ||
-        o.user?.email?.toLowerCase().includes(lowerSearch)
-      );
-    }
-
-    const total = orders.length;
-    const totalPages = Math.ceil(total / limit);
-    const paginatedOrders = orders.slice(skip, skip + limit);
-
-    res.json({
-      success: true,
-      orders: paginatedOrders,
-      total,
-      totalPages,
-      currentPage: page
-    });
-
-  } catch (error) {
-    console.error("ERROR EN getOrders:", error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al obtener las órdenes',
-      error: error.message
-    });
-  }
 };
 
 export const getOrderById = async (req, res) => {
@@ -160,6 +161,7 @@ export const updateOrderStatus = async (req, res) => {
     try {
         const orderId = req.params.id;
         const { status, paymentStatus } = req.body;
+        console.log(status);
 
         const order = await Order.findById(orderId);
 
@@ -255,4 +257,3 @@ export const cancelOrder = async (req, res) => {
         });
     }
 };
-
