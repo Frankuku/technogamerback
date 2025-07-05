@@ -4,50 +4,50 @@ import path from 'path';
 import fs from 'fs';
 
 export const getProducts = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 50;
+        const skip = (page - 1) * limit;
 
-    const searchQuery = req.query.search || '';
-    const categoryFilter = req.query.category || '';
+        const searchQuery = req.query.search || '';
+        const categoryFilter = req.query.category || '';
 
-    const filter = {};
+        const filter = {};
 
-    if (searchQuery.trim()) {
-      const searchRegex = new RegExp(searchQuery, 'i');
-      filter.$or = [{ name: searchRegex }, { description: searchRegex }];
+        if (searchQuery.trim()) {
+            const searchRegex = new RegExp(searchQuery, 'i');
+            filter.$or = [{ name: searchRegex }, { description: searchRegex }];
+        }
+
+        if (categoryFilter.trim()) {
+            filter.category = categoryFilter;
+        }
+
+        const products = await Product.find(filter)
+            .populate('category')
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        const total = await Product.countDocuments(filter);
+
+        res.json({
+            success: true,
+            count: products.length,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            products,
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener productos',
+            error: error.message,
+        });
     }
-
-    if (categoryFilter.trim()) {
-      filter.category = categoryFilter;
-    }
-
-    const products = await Product.find(filter)
-      .populate('category')
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
-
-    const total = await Product.countDocuments(filter);
-
-    res.json({
-      success: true,
-      count: products.length,
-      total,
-      totalPages: Math.ceil(total / limit),
-      currentPage: page,
-      products,
-    });
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al obtener productos',
-      error: error.message,
-    });
-  }
 };
 
 export const searchProducts = async (req, res) => {
