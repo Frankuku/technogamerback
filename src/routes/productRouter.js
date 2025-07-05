@@ -32,33 +32,36 @@ productRouter.get("/:id", [
 productRouter.post("/", [
     check('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
     handleValidationErrors,
-    //verifyToken,
-    //verifyAdminRole
+    verifyToken,
+    verifyAdminRole
 ], createProduct);
 
 productRouter.put("/:id", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     check('name').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
     handleValidationErrors,
-    //verifyToken
+    verifyToken
 ], updateProduct);
 
 productRouter.patch("/:id", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
-    //verifyToken
+    verifyToken,
+    verifyAdminRole
 ], patchProduct);
 
 productRouter.delete("/:id", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
-    //verifyToken
+    verifyToken,
+    verifyAdminRole
 ], deleteProduct);
 
 productRouter.post("/:id/upload", [
     param('id').isMongoId().withMessage('ID de producto no válido'),
     handleValidationErrors,
-    //verifyToken
+    verifyToken,
+    verifyAdminRole
 ],
     upload.single('image'),
     uploadProductImage
