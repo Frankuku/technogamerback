@@ -41,8 +41,8 @@ userRouter.post("/",
         check('password', 'El password es obligatorio | EV').not().isEmpty()
     ],
     handleValidationErrors,
-    //verifyToken,
-    //verifyAdminRole,
+    verifyToken,
+    verifyAdminRole,
     createUser
 )
 
@@ -51,10 +51,8 @@ userRouter.delete("/:id",
         param('id', 'El id proporcionado no es de mongodb, fijate bien').isMongoId()
     ],
     handleValidationErrors,
-    //verifyToken,
-    //verifyAdminRole,
-    //verifyToken,
-    //verifyAdminRole,
+    verifyToken,
+    verifyAdminRole,
     deleteUser
 )
 
@@ -62,8 +60,8 @@ userRouter.put("/:id", [
     param('id', 'El id proporcionado no es de mongodb, fijate bien').isMongoId()
 ],
     handleValidationErrors,
-    //verifyToken,
-    //verifyToken,
+    verifyToken,
+    verifyAdminRole,
     updateUser
 )
 
