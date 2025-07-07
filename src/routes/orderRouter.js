@@ -19,10 +19,10 @@ router.get('/', verifyToken, verifyAdminRole,
 router.get('/:id', verifyToken, verifyAdminRole,
     getOrderById);
 
-router.patch('/:id/status', verifyToken, verifyAdminRole,
+router.patch('/:id/status', verifyToken, 
     updateOrderStatus);
 
-router.post('/:id/cancel', verifyToken, verifyAdminRole,
+router.post('/:id/cancel', verifyToken, 
     cancelOrder);
 
 export default router;
