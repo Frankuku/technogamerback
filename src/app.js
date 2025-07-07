@@ -60,3 +60,6 @@ console.log(`Puerto configurado: ${port}`);
 app.listen(port, () => {
     console.log(`Server (backend) running on port: ${port}`)
 })
+app.get("/", (req, res) => {
+    res.send("API funcionando correctamente 🚀");
+});
