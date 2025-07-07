@@ -14,7 +14,7 @@ const router = Router();
 router.post('/', verifyToken, verifyAdminRole,
     createOrder);
 
-router.get('/', verifyToken,verifyAdminRole,
+router.get('/', 
     getOrders);
 
 router.get('/:id', verifyToken, verifyAdminRole,
