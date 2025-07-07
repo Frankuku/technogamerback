@@ -13,10 +13,10 @@ const router = Router();
 router.post('/', verifyToken, 
     createOrder);
 
-router.get('/', verifyToken, verifyAdminRole,
+router.get('/', verifyToken,
     getOrders);
 
-router.get('/:id', verifyToken, verifyAdminRole,
+router.get('/:id', verifyToken,
     getOrderById);
 
 router.patch('/:id/status', verifyToken, 
