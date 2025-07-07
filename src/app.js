@@ -30,9 +30,13 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors({
-    origin: 'https://techno-gamer.netlify.app'
-}));
+app.use(
+    cors({
+        origin: "https://techno-gamer.netlify.app",
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
+    })
+);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(morgan('dev'));
