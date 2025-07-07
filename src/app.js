@@ -31,7 +31,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://TU-SITIO.netlify.app'
+    origin: 'https://techno-gamer.netlify.app'
 }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
