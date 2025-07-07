@@ -17,7 +17,7 @@ router.post('/', verifyToken, verifyAdminRole,
 router.get('/', 
     getOrders);
 
-router.get('/:id', verifyToken, verifyAdminRole,
+router.get('/:id', verifyToken,
     getOrderById);
 
 router.patch('/:id/status', verifyToken, verifyAdminRole,
