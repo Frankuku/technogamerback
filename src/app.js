@@ -30,8 +30,9 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors());
-
+app.use(cors({
+    origin: 'https://TU-SITIO.netlify.app'
+}));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(morgan('dev'));
