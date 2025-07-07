@@ -11,7 +11,7 @@ import {verifyAdminRole} from '../middlewares/verifyAdminRole.js';
 
 const router = Router();
 
-router.post('/', verifyToken, verifyAdminRole,
+router.post('/', verifyToken,
     createOrder);
 
 router.get('/', 
