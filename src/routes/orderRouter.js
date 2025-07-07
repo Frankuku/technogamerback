@@ -10,19 +10,19 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 
 const router = Router();
 
-router.post('/', //verifyToken,
+router.post('/', verifyToken,
     createOrder);
 
-router.get('/', //verifyToken,
+router.get('/', verifyToken,
     getOrders);
 
-router.get('/:id', //verifyToken,
+router.get('/:id', verifyToken,
     getOrderById);
 
-router.patch('/:id/status', //verifyToken,
+router.patch('/:id/status', verifyToken,
     updateOrderStatus);
 
-router.post('/:id/cancel', //verifyToken,
+router.post('/:id/cancel', verifyToken,
     cancelOrder);
 
 export default router;
