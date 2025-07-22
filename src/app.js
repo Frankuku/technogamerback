@@ -5,7 +5,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import cors from "cors";
-import router from "./routes/index.js";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRouter.js";
 import productRouter from "./routes/productRouter.js";
