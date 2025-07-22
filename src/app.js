@@ -30,24 +30,28 @@ const app = express();
 
 app.use(express.json());
 
-app.use(
-    cors({
-        origin: "https://techno-gamer.netlify.app",
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-        allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
-    })
-);
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://techno-gamer.netlify.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(morgan('dev'));
 
 app.use((req, res, next) => {
     console.log(`${new Date()}: METHOD: ${req.method}`)
-
-    /*    if (true) {
-           res.json({ error: "esto es un error" })
-       } */
-
     next()
 })
 

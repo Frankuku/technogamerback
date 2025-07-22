@@ -39,17 +39,22 @@ export const login = async (req, res) => {
 
 }
 
-
 export const getUsers = async (req, res) => {
     try {
-        const { page = 1, limit = 5, search = "" } = req.query;
+        const { page = 1, limit = 5, search = "", role } = req.query;
 
-        const query = {
-            $or: [
+        const query = {};
+
+        if (search) {
+            query.$or = [
                 { email: { $regex: search, $options: "i" } },
                 { username: { $regex: search, $options: "i" } },
-            ],
-        };
+            ];
+        }
+
+        if (role && role !== "all") {
+            query.role = role;
+        }
 
         const total = await User.countDocuments(query);
         const users = await User.find(query)
@@ -74,12 +79,12 @@ export const getUsers = async (req, res) => {
         });
     }
 };
+
 export const createUser = async (req, res) => {
     try {
         console.log(req.user)
         const { username, email, password, role = "user" } = req.body;
 
-        // Verificar si el usuario ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
