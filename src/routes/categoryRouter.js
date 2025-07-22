@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { check, param } from 'express-validator';
 import { handleValidationErrors } from "../middlewares/validationMiddleware.js";
-import { verifyToken } from "../middlewares/verifyToken.js";
 import {
     getCategories,
     getCategoryById,
@@ -35,19 +34,16 @@ categoryRouter.put("/:id", [
     param('id').isMongoId().withMessage('ID de categoría no válido'),
     check('name').notEmpty().withMessage('El nombre de la categoría es obligatorio'),
     handleValidationErrors,
-    //verifyToken
 ], updateCategory);
 
 categoryRouter.patch("/:id", [
     param('id').isMongoId().withMessage('ID de categoría no válido'),
     handleValidationErrors,
-    //verifyToken
 ], patchCategory);
 
 categoryRouter.delete("/:id", [
     param('id').isMongoId().withMessage('ID de categoría no válido'),
     handleValidationErrors,
-    //verifyToken
 ], deleteCategory);
 
 export default categoryRouter;
