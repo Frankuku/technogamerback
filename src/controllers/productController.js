@@ -9,45 +9,44 @@ export const getProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 30;
     const skip = (page - 1) * limit;
 
-        const searchQuery = req.query.search || '';
-        const categoryFilter = req.query.category || '';
+    const searchQuery = req.query.search || '';
+    const categoryFilter = req.query.category || '';
 
-        const filter = {};
+    const filter = { isAvailable: { $ne: false } };
 
-        if (searchQuery.trim()) {
-            const searchRegex = new RegExp(searchQuery, 'i');
-            filter.$or = [{ name: searchRegex }, { description: searchRegex }];
-        }
-
-        if (categoryFilter.trim()) {
-            filter.category = categoryFilter;
-        }
-
-        const products = await Product.find(filter)
-            .populate('category')
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 });
-
-        const total = await Product.countDocuments(filter);
-
-        res.json({
-            success: true,
-            count: products.length,
-            total,
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
-            products,
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message: 'Error al obtener productos',
-            error: error.message,
-        });
+    if (searchQuery.trim()) {
+      const searchRegex = new RegExp(searchQuery, 'i');
+      filter.$or = [{ name: searchRegex }, { description: searchRegex }];
     }
+
+    if (categoryFilter.trim()) {
+      filter.category = categoryFilter;
+    }
+
+    const products = await Product.find(filter)
+      .populate('category')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const total = await Product.countDocuments(filter);
+
+    res.json({
+      success: true,
+      count: products.length,
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener productos',
+      error: error.message,
+    });
+  }
 };
 
 export const searchProducts = async (req, res) => {
@@ -328,23 +327,30 @@ export const patchProduct = async (req, res) => {
 }
 
 export const deleteProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
+  try {
+    const productId = req.params.id;
 
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'Producto no encontrado' });
-        }
-
-        await Product.findByIdAndDelete(productId);
-
-        res.json({ success: true, message: `Producto con ID: ${productId} eliminado correctamente` });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: 'Error al eliminar el producto', error: error.message });
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Producto no encontrado' });
     }
-}
+
+    if (!product.isAvailable) {
+      return res.status(400).json({ success: false, message: 'El producto ya fue eliminado' });
+    }
+
+    product.isAvailable = false;
+    await product.save();
+
+    res.json({
+      success: true,
+      message: `Producto con ID: ${productId} marcado como eliminado (soft delete)`
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: 'Error al eliminar el producto', error: error.message });
+  }
+};
 
 export const uploadProductImage = async (req, res) => {
     try {

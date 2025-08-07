@@ -43,7 +43,8 @@ export const getUsers = async (req, res) => {
     try {
         const { page = 1, limit = 5, search = "", role } = req.query;
 
-        const query = {};
+        const query = { isAvailable: true };
+
 
         if (search) {
             query.$or = [
@@ -113,7 +114,7 @@ export const createUser = async (req, res) => {
 export const getUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const user = await User.findById(userId);
+        const user = await User.findOne({ _id: userId, deleted: true });
 
         if (!user) {
             return res.status(404).json({ success: false, message: "Usuario no encontrado" });
@@ -123,7 +124,7 @@ export const getUser = async (req, res) => {
 
         res.json({
             statusOK: true,
-            message: "user encountered!!",
+            message: "user encontrado!!",
             user: user,
             productsCreated: products
         });
@@ -168,25 +169,31 @@ export const updateUser = async (req, res) => {
 }
 
 export const deleteUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
+  try {
+    const userId = req.params.id;
 
-        console.log(userId)
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isAvailable: false },
+      { new: false }
+    );
 
-        const user = await User.findByIdAndDelete(userId);
-
-        console.log(user)
-
-        res.json({
-            statusOK: true,
-            message: "Usuario eliminado correctamente"
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            statusOK: false,
-            message: "Error al eliminar el usuario"
-        })
+    if (!user) {
+      return res.status(404).json({
+        statusOK: false,
+        message: "Usuario no encontrado",
+      });
     }
-}
+
+    res.json({
+      statusOK: true,
+      message: "Usuario eliminado correctamente (soft delete)",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      statusOK: false,
+      message: "Error al eliminar el usuario",
+    });
+  }
+};

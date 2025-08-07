@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
+    },
+    isAvailable: {
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true
